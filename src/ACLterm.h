@@ -21,8 +21,19 @@
 #ifndef ACLterm_h
 #define ACLterm_h
 
-struct term {                             // define an ACL term
+#include <stdio.h>
+#include <string.h>
+
+#include "ACL.h"
+
+
+/**
+ * The ACL term.
+ */
+struct term
+{
     unsigned short  type;                 //   data type
+
     union {
         long            integer;          //   int value (or num part)
         long            denom;            //   denominator
@@ -30,36 +41,49 @@ struct term {                             // define an ACL term
         double          imag;             //   imaginary part
         char            tval;             //   truth value T|F
         char            string[AGGRSIZE]; //   string
+
         union {
-            struct lisNode* lisptr;       //   ptr to aggregate
-            struct setNode* setptr;
-            struct vecNode* vecptr;
-            struct matNode* matptr;
+            struct lisNode *lisptr;       //   Pointer to aggregate.
+            struct setNode *setptr;
+            struct vecNode *vecptr;
+            struct matNode *matptr;
         };
-        char            aggr[AGGRSIZE];   //   aggregate
+        char aggr[AGGRSIZE];              //   The aggregate.
     } data;
 };
- 
-struct term* NewTerm() {                // constructor for term object
-    struct term* p;
-    
-    p = (struct term*)malloc(sizeof(struct term));
-    
+
+
+/**
+ * Create the term object.
+ */
+struct term* NewTerm()
+{
+    struct term *p = (struct term*)malloc( sizeof (struct term) );
+
     p->data.integer = 0;
     p->data.denom   = 1;
     p->data.floater = 0.0;
     p->data.imag    = 0.0;
-    p->data.tval    =' ';
+    p->data.tval    = ' ';
+
     strcpy(p->data.string,"");
+
     struct lisNode* lisptr = NULL;
     struct setNode* setptr = NULL;
     struct vecNode* vecptr = NULL;
     struct matNode* matptr = NULL;
-    strcpy(p->data.aggr,"");
+
+    strcpy(p->data.aggr, "");
+
     return p;
 }
 
-void PrintTerm(struct term* this) {    // print given term struct
+
+/**
+ * Print the term object.
+ */
+void PrintTerm(struct term const * this)
+{
     printf("\nterm:\n");
     printf("type       = %i\n", this->type);
     printf("integer    = %li\n",this->data.integer);
@@ -80,6 +104,6 @@ void PrintTerm(struct term* this) {    // print given term struct
     }
     printf("\n\n");
 }
-    
+
 #endif /* ACLterm_h */
 //=== end ACLterm.h ===================================================

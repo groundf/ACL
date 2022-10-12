@@ -22,6 +22,10 @@
 #ifndef ACLprim_h
 #define ACLprim_h
 
+
+#include "getline.h"
+
+
 int type;
 long x, y, z;
 double xf, yf;
@@ -55,13 +59,13 @@ char predop(char* op) {                     // predicates
                                             // return Y op X
     if (Sdep < 2) {
         error("compile","stack underflow",op);
-        return ' ';        
+        return ' ';
     }
     if (Xtype != Ytype) {
         error("compile","X and Y not same type",op);
         return (' ');
     }
-    
+
     if(isNumber(Xtype)) {
         switch (Xtype){
         case INTTYP:
@@ -166,14 +170,14 @@ int binaryop(char* op,long *intret,double *fltret,int *typret) {
     long xintval;  long yintval;
     double xfltval; double yfltval;
     int xtype; int ytype;
-    
+
     if (Sdep < 2) {return UNDERFLOW;}       // ensure 2+ stack entries
     if (Xtype!=INTTYP && Xtype!=FLTTYP) {return MISMATCH;}
-    
+
     x = pop(); y = pop();                   // fetch X and Y
     xtype = x->term->type;                  // get types
     ytype = y->term->type;
-    
+
     if (xtype==INTTYP && ytype==INTTYP) {       // both ints
         xintval = x->term->data.integer;
         yintval = y->term->data.integer;
@@ -247,7 +251,7 @@ int vecop(char* op) {                           // perform vector operations
     struct Snode* y;
     double ax; double ay; double az;
     double bx; double by; double bz;
-    
+
     if (Sdep < 2) {
         error("execute","stack underflow",op);
         return UNDERFLOW;
@@ -316,7 +320,7 @@ int trigop(char* op) {                       // trigonometric operations
     double value = 0;
     struct Snode* x;
     struct term* t;
-    
+
     if (Sdep < 1) {
         error("execute","stack underflow",op);
         return UNDERFLOW;
@@ -354,7 +358,7 @@ void B() {                      // B combinator BZYX = X(YZ)
     struct Snode* x;
     char lambda[AGGRSIZE];
     unsigned long len;
-    
+
     if (X->term->type == LAMTYP) {
         x = pop();
         strncpy(lambda,x->term->data.aggr,AGGRSIZE);
@@ -371,12 +375,12 @@ void B() {                      // B combinator BZYX = X(YZ)
 
 int if_() {                    // if X is T, execute
     struct Snode* x;
-    
+
     if (Sdep < 2) {
         error("execute","stack underflow","if");
         return UNDERFLOW;
     }
-    
+
     if (Xtype == TVALTYP) {
         x = pop();
         if (x->term->data.tval == 'T') {
@@ -396,7 +400,7 @@ int if_() {                    // if X is T, execute
 
 int ifelse() {               // if X is T, execute Y, else Z
     struct Snode* x;
-     
+
     if (Sdep < 3) {
         error("execute","stack underflow","ifelse");
         return UNDERFLOW;
@@ -405,7 +409,7 @@ int ifelse() {               // if X is T, execute Y, else Z
         error("execute","type mismatch","ifelse");
         return MISMATCH;
     }
-    
+
     if (Xtype == TVALTYP) {
         x = pop();
         if (x->term->data.tval == 'T') {
@@ -492,7 +496,7 @@ int fact() {
     long fac = 1;
     struct Snode* x;
     struct term* t;
-    
+
     if (Sdep < 1) {
         error("execute","stack underflow","!");
         return UNDERFLOW;
@@ -501,16 +505,16 @@ int fact() {
         error("\nexecute","X not integer","!");
         return MISMATCH;
     }
-   
+
     long n = X->term->data.integer;
-    
+
     if (n > 20) {
         error("execute","n > 20","!");
         return FAIL;;
     }
     x = pop();
     t = NewTerm();
-    
+
     for (int i=1; i<=n; i++) {
         fac = fac * i;
     }
@@ -533,7 +537,7 @@ int incr() {
 }
 
 int for_() {                        // [Z λ n] for => [Z']
-    
+
     if (Sdep < 3) {
         error("execute","stack underflow","for");
         return UNDERFLOW;
@@ -559,7 +563,7 @@ int for_() {                        // [Z λ n] for => [Z']
 }
 
 int while_() {                      // [Z ⋋ tval] while => [⋋(Z)]
-    
+
     if (Sdep < 3) {
         error("execute","stack undeflow","while");
         return UNDERFLOW;
@@ -585,7 +589,7 @@ int d2r() {                          // convert degrees to radians
     struct Snode* x;
     struct term* t;
     double angle;
-    
+
     if (Sdep < 1) {
         error("execute","stack underflow","d2r");
         return UNDERFLOW;
@@ -611,7 +615,7 @@ int r2d() {                          // convert radians to degrees
     struct Snode* x;
     struct term* t;
     double angle;
-    
+
     if (Sdep < 1) {
         error("execute","stack underflow","r2d");
         return UNDERFLOW;
@@ -637,7 +641,7 @@ int r2d() {                          // convert radians to degrees
 int depth() {
     struct Snode* x;
     int n;
-    
+
     if (Sdep < 2) {
         error("execute","stack underflow","depth");
         return UNDERFLOW;
@@ -659,7 +663,7 @@ int depth() {
 void print() {                          // print X
     char str[STRSIZE];
     unsigned long len;
-    
+
     if (Sdep < 1) {
         error("execute","stack underflow","print");
         return;
@@ -688,8 +692,8 @@ void get() {                                // get program input
     size_t size;
     size_t len = 0;
     int ret;
-    
-    size = getline(&line, &len, stdin);
+
+    size = _getline(&line, &len, stdin);
     if (size > 0)
         ret = compile(line);
     else
@@ -698,5 +702,3 @@ void get() {                                // get program input
 #endif //ACLprim_h
 
 //=== end ACLprim.h ===========================================
-
-

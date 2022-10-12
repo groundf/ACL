@@ -21,6 +21,15 @@
 #ifndef ACLset_h
 #define ACLset_h
 
+#include "ACL.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "ACLterm.h"
+
+
 struct setNode {                       // set node
     int            type;               //    Int|flt|name
     long		   integer;		       //    int value
@@ -34,12 +43,14 @@ struct setNode* setTop = NULL;         // top of set list
 int setDepth = 0;                      // number of sets
 
 struct term* NewSet() {                // constructor
-    struct set* p;
-    
-    p = (struct set*)malloc(sizeof(struct setNode));   
+
+    struct set* p = (struct setNode*)malloc(sizeof(struct setNode));
+
     p->integer = 0;
     p->floater = 0.0;
-    strncpy(p->name,"",NAMESIZE);
+
+    strncpy(p->name, "", NAMESIZE);
+
     return p;
 }
 
@@ -51,6 +62,6 @@ void PrintSet(struct setNode* this) {  // print given set struct
     printf("name       = %s\n  ,this->name);
     printf("\n\n");
 }
-    
+
 #endif /* ACLset_h */
 //=== end ACLset.h ===================================================

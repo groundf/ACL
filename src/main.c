@@ -1,4 +1,3 @@
-
 //=== ACLmain.c 2022/05/13 =================================================
 //
 //  ACL main program
@@ -30,6 +29,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <errno.h>
+
 #include "ACL.h"
 #include "ACLvector.h"
 #include "ACLterm.h"
@@ -39,7 +39,9 @@
 #include "ACLprim.h"
 #include "ACLexecute.h"
 
-int StrCat(char* str,char* str1,char* str2) {   // cat strings properly!
+#include "getline.h"
+
+static int StrCat(char* str,char* str1,char* str2) {   // cat strings properly!
     unsigned short len0 = strlen(str);
     unsigned short len1 = strlen(str1);
     unsigned short len2 = strlen(str2);
@@ -64,7 +66,8 @@ int StrCat(char* str,char* str1,char* str2) {   // cat strings properly!
     return OK;
 }
 
-int GetLibrary() {
+
+static int GetLibrary() {
 	FILE *fp;
     char str[120];
     //char* path;
@@ -86,12 +89,15 @@ int GetLibrary() {
     return OK;
 }
 
-int main(int argc, const char * argv[]) { // ACL main program
+
+// ACL main program
+int main(int argc, const char * argv[])
+{
     char *line = NULL;
     size_t len = 0;
     size_t size;
     int ret;
-    
+
     if (argc==1 || argc==2) {
         InitSymbols();
         InitStack();
@@ -107,7 +113,7 @@ int main(int argc, const char * argv[]) { // ACL main program
         ACLstate = INTERACTING;
         while (1) {                           // loop until quit
             PrintStack();
-            size = getline(&line, &len, stdin);
+            size = _getline(&line, &len, stdin);
             ret = compile(line);
             if (ret == QUIT) {
                 printf("\nACL terminated\n");
@@ -119,25 +125,30 @@ int main(int argc, const char * argv[]) { // ACL main program
         FILE *fp;
         char str[120];
         char path[120] = "                                                ";
-        
+
         ACLstate = RUNNING;
         StrCat(path,ACLprog,argv[1]);
+
         fp = fopen(path,"r");                   // open program file
+
         if (fp == NULL) {
             error("main","program file",strerror(errno));
             return FAIL;
         }
+
         printf("\nexecuting %s\n",argv[1]);
+
         while (1) {                             // compile until EOF
-            if (fgets(str,LINESIZE,fp) != NULL) {              
+            if (fgets(str,LINESIZE,fp) != NULL) {
             	compile(str);
             }
             else break;
         }
+
         fclose(fp);
+
         return OK;
     }
 }
 
 // === end ACLmain.c ===============================================
-

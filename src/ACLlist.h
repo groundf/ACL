@@ -17,33 +17,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 //===================================================================
-
 #ifndef ACLlist_h
 #define ACLlist_h
 
-struct lisNode {                       // list node
-    struct term*	data;				//	  data value
-    struct listNode next;               //    next node
+#include <stdlib.h>
+
+#include "ACLterm.h"
+
+
+struct listNode {                       // list node
+    struct term     *data;				// data value
+    struct listNode *next;              // next node
 };
 
-struct listNode* lists[120];             // defined lists
-struct listNode* lisTop = NULL;          // top of list
+struct listNode* lists[120];            // defined lists
+struct listNode* lisTop = NULL;         // top of list
+
 int lisDepth = 0;                       // number of lists
 
-struct term* NewList() {                 // constructor
-    struct list* p;   
-    p = (struct list*)malloc(sizeof(struct listNode));
-	p->data = NULL;
-	p->next = NULL;   
+/**
+ * Create new list.
+ */
+struct term* NewList() {
+
+    struct list *p = (struct list*)malloc(sizeof (struct listNode) );
+
+    p->data = NULL;
+	p->next = NULL;
+
     return p;
 }
 
-void PrintList(struct listNode* this) {  // print given list struct
+// print given list struct
+void PrintList(struct listNode *this) {
     printf("\nlist:\n");
     printf("data = %p\n",this->data);
 	printf("next = %p\n",this->next);
     printf("\n\n");
 }
-    
+
 #endif /* ACLlist_h */
 //=== end ACLlist.h ===================================================
