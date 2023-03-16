@@ -16,7 +16,7 @@ cmake -B build
 ```
 
 ```shell
-cmalke --build build --config debug
+cmake --build build --config debug
 ```
 
 ```shell
